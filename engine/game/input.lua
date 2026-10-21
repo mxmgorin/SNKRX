@@ -2,7 +2,7 @@ Input = Object:extend()
 function Input:init(joystick_index)
   self.mouse_buttons = {"m1", "m2", "m3", "m4", "m5", "wheel_up", "wheel_down"}
   self.gamepad_buttons = {"fdown", "fup", "fleft", "fright", "dpdown", "dpup", "dpleft", "dpright", "start", "back", "guide", "leftstick", "rightstick", "rb", "lb",
-    "lsleft", "lsright", "lsup", "lsdown"}
+    "lsleft", "lsright", "lsup", "lsdown", "rsleft", "rsright", "rsup", "rsdown"}
   self.index_to_gamepad_button = {["a"] = "fdown", ["b"] = "fright", ["x"] = "fleft", ["y"] = "fup", ["back"] = "back", ["start"] = "start", ["guide"] = "guide", ["leftstick"] = "leftstick",
     ["rightstick"] = "rightstick", ["leftshoulder"] = "lb", ["rightshoulder"] = "rb", ["dpdown"] = "dpdown", ["dpup"] = "dpup", ["dpleft"] = "dpleft", ["dpright"] = "dpright",
   }
@@ -21,13 +21,15 @@ function Input:init(joystick_index)
 end
 
 
--- Left stick deflection past which its virtual d-pad buttons count as held.
+-- Stick deflection past which a stick's virtual d-pad buttons count as held.
 local stick_threshold = 0.5
 
 function Input:update(dt)
-  local x, y = self.gamepad_axis.leftx or 0, self.gamepad_axis.lefty or 0
-  self.gamepad_state.lsleft, self.gamepad_state.lsright = x < -stick_threshold, x > stick_threshold
-  self.gamepad_state.lsup, self.gamepad_state.lsdown = y < -stick_threshold, y > stick_threshold
+  for prefix, axes in pairs({ls = {'leftx', 'lefty'}, rs = {'rightx', 'righty'}}) do
+    local x, y = self.gamepad_axis[axes[1]] or 0, self.gamepad_axis[axes[2]] or 0
+    self.gamepad_state[prefix .. 'left'], self.gamepad_state[prefix .. 'right'] = x < -stick_threshold, x > stick_threshold
+    self.gamepad_state[prefix .. 'up'], self.gamepad_state[prefix .. 'down'] = y < -stick_threshold, y > stick_threshold
+  end
 
   for _, action in ipairs(self.actions) do
     self[action].pressed = false

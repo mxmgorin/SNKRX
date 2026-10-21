@@ -13,8 +13,8 @@ function init()
   cursor_image = love.graphics.newImage('left_ptr.png')
   shared_init()
 
-  input:bind('move_left', {'a', 'left', 'dpleft', 'lsleft', 'm1', 'fdown', 'lb'})
-  input:bind('move_right', {'d', 'e', 's', 'right', 'dpright', 'lsright', 'm2', 'fright', 'rb'})
+  input:bind('move_left', {'a', 'left', 'dpleft', 'lsleft', 'rsleft', 'm1', 'fdown', 'lb'})
+  input:bind('move_right', {'d', 'e', 's', 'right', 'dpright', 'lsright', 'rsright', 'm2', 'fright', 'rb'})
   input:bind('enter', {'space', 'return', 'fup'})
   input:bind('reroll', {'r', 'fleft'})
   -- Face buttons click whatever navigation focused.
@@ -1830,7 +1830,7 @@ function draw()
     main:draw()
   end)
   -- The system cursor is not drawn in fullscreen on every device.
-  if love.mouse.isVisible() and not navigation.active then love.graphics.draw(cursor_image, love.mouse.getPosition()) end
+  if love.mouse.isVisible() and not navigation.cursor_hidden then love.graphics.draw(cursor_image, love.mouse.getPosition()) end
 end
 
 

@@ -14,8 +14,15 @@ local aim_samples = 7
 local hold_timers = {}
 local last_x, last_y
 
--- True while the mouse sits where navigation put it; false once a real mouse moves it.
-navigation.active = false
+-- True until a real mouse moves; warps by navigation or the game keep the cursor hidden.
+navigation.cursor_hidden = true
+
+-- Records every warp, so a position change not recorded here comes from a real mouse.
+local set_position = love.mouse.setPosition
+function love.mouse.setPosition(x, y)
+  set_position(x, y)
+  last_x, last_y = love.mouse.getPosition()
+end
 
 
 -- Tracks a group as a source of navigation candidates.
@@ -26,10 +33,10 @@ end
 
 -- Binds the direction actions navigation reads.
 function navigation.bind()
-  input:bind('navigate_up', {'up', 'dpup', 'lsup'})
-  input:bind('navigate_down', {'down', 'dpdown', 'lsdown'})
-  input:bind('navigate_left', {'left', 'dpleft', 'lsleft'})
-  input:bind('navigate_right', {'right', 'dpright', 'lsright'})
+  input:bind('navigate_up', {'up', 'dpup', 'lsup', 'rsup'})
+  input:bind('navigate_down', {'down', 'dpdown', 'lsdown', 'rsdown'})
+  input:bind('navigate_left', {'left', 'dpleft', 'lsleft', 'rsleft'})
+  input:bind('navigate_right', {'right', 'dpright', 'lsright', 'rsright'})
 end
 
 
@@ -143,18 +150,19 @@ local function move(d, scene_groups)
   local target = best_in_cone or best_ahead or (not focused and nearest)
   if not target then return end
 
-  last_x, last_y = target.x*sx, target.y*sy
-  love.mouse.setPosition(last_x, last_y)
-  navigation.active = true
+  love.mouse.setPosition(target.x*sx, target.y*sy)
+  navigation.cursor_hidden = true
 end
 
 
 -- Reads direction input and moves focus, repeating while a direction is held.
 -- scene_groups, when given, replaces the previous-tick groups as the candidate source.
 function navigation.update(dt, scene_groups)
-  if navigation.active then
-    local mx, my = love.mouse.getPosition()
-    if math.abs(mx - last_x) > 1 or math.abs(my - last_y) > 1 then navigation.active = false end
+  local mx, my = love.mouse.getPosition()
+  if not last_x then last_x, last_y = mx, my end
+  if math.abs(mx - last_x) > 1 or math.abs(my - last_y) > 1 then
+    navigation.cursor_hidden = false
+    last_x, last_y = mx, my
   end
 
   for name, d in pairs(directions) do
