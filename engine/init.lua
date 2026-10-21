@@ -10,6 +10,7 @@ if not path:find("init") then
   require(path .. ".datastructures.grid")
   require(path .. ".game.gameobject")
   require(path .. ".game.group")
+  require(path .. ".game.navigation")
   require(path .. ".game.state")
   require(path .. ".game.physics")
   require(path .. ".game.steering")

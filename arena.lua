@@ -887,6 +887,12 @@ function Arena:endless()
 end
 
 
+-- Returns the groups navigation may focus in, or nil for its default.
+function Arena:navigation_groups()
+  if self.in_credits then return {self.credits} end
+end
+
+
 function Arena:create_credits()
   local open_url = function(b, url)
     ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}

@@ -45,11 +45,13 @@ function Group:init()
   self.objects.by_class = {}
   self.cells = {}
   self.cell_size = 64
+  navigation.register(self)
   return self
 end
 
 
 function Group:update(dt)
+  self.update_frame = frame
   self.t:update(dt)
   for _, object in ipairs(self.objects) do
     if object.force_update then

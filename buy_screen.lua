@@ -1196,9 +1196,10 @@ function CharacterPart:update(dt)
     if self.parent.unit_grabbed and self.parent.unit_grabbed == self then
       local x, y = camera:get_mouse_position()
       local i
-      if y >= self.y - 19 and y <= self.y + 19 then i = self.i
-      elseif y < self.y - 19 then i = self.i - 1
-      elseif y > self.y + 19 then i = self.i + 1
+      -- Swaps once the mouse passes halfway to a neighbouring slot, so a neighbour's centre is enough.
+      if y >= self.y - 19/2 and y <= self.y + 19/2 then i = self.i
+      elseif y < self.y - 19/2 then i = self.i - 1
+      elseif y > self.y + 19/2 then i = self.i + 1
       end
       i = math.clamp(i, 1, #self.parent.units)
       -- i = math.clamp(math.floor((y - 40)/19) + 1, 1, #self.parent.units)

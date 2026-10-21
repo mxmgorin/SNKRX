@@ -13,9 +13,13 @@ function init()
   cursor_image = love.graphics.newImage('left_ptr.png')
   shared_init()
 
-  input:bind('move_left', {'a', 'left', 'dpleft', 'm1'})
-  input:bind('move_right', {'d', 'e', 's', 'right', 'dpright', 'm2'})
-  input:bind('enter', {'space', 'return', 'fleft', 'fdown', 'fright'})
+  input:bind('move_left', {'a', 'left', 'dpleft', 'm1', 'fdown'})
+  input:bind('move_right', {'d', 'e', 's', 'right', 'dpright', 'm2', 'fright'})
+  input:bind('enter', {'space', 'return'})
+  -- Face buttons click whatever navigation focused.
+  input:bind('m1', {'m1', 'fdown'})
+  input:bind('m2', {'m2', 'fright'})
+  navigation.bind()
 
   local s = {tags = {sfx}}
   artificer1 = Sound('458586__inspectorj__ui-mechanical-notification-01-fx.ogg', s)
@@ -1764,6 +1768,7 @@ end
 
 
 function update(dt)
+  navigation.update(dt, main.current and main.current.navigation_groups and main.current:navigation_groups())
   main:update(dt)
 
   --[[
@@ -1839,7 +1844,7 @@ function draw()
     main:draw()
   end)
   -- The system cursor is not drawn in fullscreen on every device.
-  if love.mouse.isVisible() then love.graphics.draw(cursor_image, love.mouse.getPosition()) end
+  if love.mouse.isVisible() and not navigation.active then love.graphics.draw(cursor_image, love.mouse.getPosition()) end
 end
 
 
