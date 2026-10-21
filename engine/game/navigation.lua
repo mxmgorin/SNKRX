@@ -26,10 +26,10 @@ end
 
 -- Binds the direction actions navigation reads.
 function navigation.bind()
-  input:bind('navigate_up', {'up', 'dpup'})
-  input:bind('navigate_down', {'down', 'dpdown'})
-  input:bind('navigate_left', {'left', 'dpleft'})
-  input:bind('navigate_right', {'right', 'dpright'})
+  input:bind('navigate_up', {'up', 'dpup', 'lsup'})
+  input:bind('navigate_down', {'down', 'dpdown', 'lsdown'})
+  input:bind('navigate_left', {'left', 'dpleft', 'lsleft'})
+  input:bind('navigate_right', {'right', 'dpright', 'lsright'})
 end
 
 
