@@ -1815,22 +1815,6 @@ function update(dt)
   end
   ]]--
 
-  if input.k.pressed then
-    if sx > 1 and sy > 1 then
-      sx, sy = sx - 0.5, sy - 0.5
-      love.window.setMode(480*sx, 270*sy)
-      state.sx, state.sy = sx, sy
-      state.fullscreen = false
-    end
-  end
-
-  if input.l.pressed then
-    sx, sy = sx + 0.5, sy + 0.5
-    love.window.setMode(480*sx, 270*sy)
-    state.sx, state.sy = sx, sy
-    state.fullscreen = false
-  end
-
   --[[
   if input.f11.pressed then
     steam.userStats.resetAllStats(true)
@@ -1864,7 +1848,7 @@ function open_options(self)
       self.ng_t = Text2{group = self.ui, x = gw/2 + 63, y = gh - 50, lines = {{text = '[bg10]current: ' .. current_new_game_plus, font = pixul_font, alignment = 'center'}}}
     end
 
-    self.resume_button = Button{group = self.ui, x = gw/2, y = gh - 225, force_update = true, button_text = self:is(MainMenu) and 'main menu (esc)' or 'resume game (esc)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+    self.resume_button = Button{group = self.ui, x = gw/2, y = gh - 200, force_update = true, button_text = self:is(MainMenu) and 'main menu (esc)' or 'resume game (esc)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
       trigger:tween(0.25, _G, {slow_amount = 1}, math.linear, function()
         slow_amount = 1
         self.paused = false
@@ -1897,7 +1881,7 @@ function open_options(self)
     end}
 
     if not self:is(MainMenu) then
-      self.restart_button = Button{group = self.ui, x = gw/2, y = gh - 200, force_update = true, button_text = 'restart run (r)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+      self.restart_button = Button{group = self.ui, x = gw/2, y = gh - 175, force_update = true, button_text = 'restart run (r)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
         self.transitioning = true
         ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -1927,28 +1911,28 @@ function open_options(self)
       end}
     end
 
-    self.mouse_button = Button{group = self.ui, x = gw/2 - 113, y = gh - 150, force_update = true, button_text = 'mouse control: ' .. tostring(state.mouse_control and 'yes' or 'no'), fg_color = 'bg10', bg_color = 'bg',
+    self.mouse_button = Button{group = self.ui, x = gw/2 - 113, y = gh - 125, force_update = true, button_text = 'mouse control: ' .. tostring(state.mouse_control and 'yes' or 'no'), fg_color = 'bg10', bg_color = 'bg',
     action = function(b)
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       state.mouse_control = not state.mouse_control
       b:set_text('mouse control: ' .. tostring(state.mouse_control and 'yes' or 'no'))
     end}
 
-    self.dark_transition_button = Button{group = self.ui, x = gw/2 + 13, y = gh - 150, force_update = true, button_text = 'dark transitions: ' .. tostring(state.dark_transitions and 'yes' or 'no'),
+    self.dark_transition_button = Button{group = self.ui, x = gw/2 + 13, y = gh - 125, force_update = true, button_text = 'dark transitions: ' .. tostring(state.dark_transitions and 'yes' or 'no'),
     fg_color = 'bg10', bg_color = 'bg', action = function(b)
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       state.dark_transitions = not state.dark_transitions
       b:set_text('dark transitions: ' .. tostring(state.dark_transitions and 'yes' or 'no'))
     end}
 
-    self.run_timer_button = Button{group = self.ui, x = gw/2 + 121, y = gh - 150, force_update = true, button_text = 'run timer: ' .. tostring(state.run_timer and 'yes' or 'no'), fg_color = 'bg10', bg_color = 'bg',
+    self.run_timer_button = Button{group = self.ui, x = gw/2 + 121, y = gh - 125, force_update = true, button_text = 'run timer: ' .. tostring(state.run_timer and 'yes' or 'no'), fg_color = 'bg10', bg_color = 'bg',
     action = function(b)
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       state.run_timer = not state.run_timer
       b:set_text('run timer: ' .. tostring(state.run_timer and 'yes' or 'no'))
     end}
 
-    self.sfx_button = Button{group = self.ui, x = gw/2 - 46, y = gh - 175, force_update = true, button_text = 'sfx volume: ' .. tostring((state.sfx_volume or 0.5)*10), fg_color = 'bg10', bg_color = 'bg',
+    self.sfx_button = Button{group = self.ui, x = gw/2 - 46, y = gh - 150, force_update = true, button_text = 'sfx volume: ' .. tostring((state.sfx_volume or 0.5)*10), fg_color = 'bg10', bg_color = 'bg',
     action = function(b)
       ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       b.spring:pull(0.2, 200, 10)
@@ -1971,7 +1955,7 @@ function open_options(self)
       b:set_text('sfx volume: ' .. tostring((state.sfx_volume or 0.5)*10))
     end}
 
-    self.music_button = Button{group = self.ui, x = gw/2 + 48, y = gh - 175, force_update = true, button_text = 'music volume: ' .. tostring((state.music_volume or 0.5)*10), fg_color = 'bg10', bg_color = 'bg',
+    self.music_button = Button{group = self.ui, x = gw/2 + 48, y = gh - 150, force_update = true, button_text = 'music volume: ' .. tostring((state.music_volume or 0.5)*10), fg_color = 'bg10', bg_color = 'bg',
     action = function(b)
       ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       b.spring:pull(0.2, 200, 10)
@@ -1992,45 +1976,6 @@ function open_options(self)
       if music.volume < 0 then music.volume = 1 end
       state.music_volume = music.volume
       b:set_text('music volume: ' .. tostring((state.music_volume or 0.5)*10))
-    end}
-
-    self.video_button_1 = Button{group = self.ui, x = gw/2 - 136, y = gh - 125, force_update = true, button_text = 'window size-', fg_color = 'bg10', bg_color = 'bg', action = function()
-      if sx > 1 and sy > 1 then
-        ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-        sx, sy = sx - 0.5, sy - 0.5
-        love.window.setMode(480*sx, 270*sy)
-        state.sx, state.sy = sx, sy
-        state.fullscreen = false
-      end
-    end}
-
-    self.video_button_2 = Button{group = self.ui, x = gw/2 - 50, y = gh - 125, force_update = true, button_text = 'window size+', fg_color = 'bg10', bg_color = 'bg', action = function()
-      ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-      sx, sy = sx + 0.5, sy + 0.5
-      love.window.setMode(480*sx, 270*sy)
-      state.sx, state.sy = sx, sy
-      state.fullscreen = false
-    end}
-
-    self.video_button_3 = Button{group = self.ui, x = gw/2 + 29, y = gh - 125, force_update = true, button_text = 'fullscreen', fg_color = 'bg10', bg_color = 'bg', action = function()
-      ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-      local _, _, flags = love.window.getMode()
-      local window_width, window_height = love.window.getDesktopDimensions(flags.display)
-      sx, sy = window_width/480, window_height/270
-      state.sx, state.sy = sx, sy
-      ww, wh = window_width, window_height
-      love.window.setMode(window_width, window_height)
-    end}
-
-    self.video_button_4 = Button{group = self.ui, x = gw/2 + 129, y = gh - 125, force_update = true, button_text = 'reset video settings', fg_color = 'bg10', bg_color = 'bg', action = function()
-      local _, _, flags = love.window.getMode()
-      local window_width, window_height = love.window.getDesktopDimensions(flags.display)
-      sx, sy = window_width/480, window_height/270
-      ww, wh = window_width, window_height
-      state.sx, state.sy = sx, sy
-      state.fullscreen = false
-      ww, wh = window_width, window_height
-      love.window.setMode(window_width, window_height)
     end}
 
     self.screen_shake_button = Button{group = self.ui, x = gw/2 - 57, y = gh - 100, w = 110, force_update = true, button_text = '[bg10]screen shake: ' .. tostring(state.no_screen_shake and 'no' or 'yes'), 
