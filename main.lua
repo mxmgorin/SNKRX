@@ -13,9 +13,10 @@ function init()
   cursor_image = love.graphics.newImage('left_ptr.png')
   shared_init()
 
-  input:bind('move_left', {'a', 'left', 'dpleft', 'lsleft', 'm1', 'fdown'})
-  input:bind('move_right', {'d', 'e', 's', 'right', 'dpright', 'lsright', 'm2', 'fright'})
-  input:bind('enter', {'space', 'return'})
+  input:bind('move_left', {'a', 'left', 'dpleft', 'lsleft', 'm1', 'fdown', 'lb'})
+  input:bind('move_right', {'d', 'e', 's', 'right', 'dpright', 'lsright', 'm2', 'fright', 'rb'})
+  input:bind('enter', {'space', 'return', 'fup'})
+  input:bind('reroll', {'r', 'fleft'})
   -- Face buttons click whatever navigation focused.
   input:bind('m1', {'m1', 'fdown'})
   input:bind('m2', {'m2', 'fright'})

@@ -989,7 +989,7 @@ end
 function RerollButton:update(dt)
   self:update_game_object(dt)
 
-  if (self.selected and input.m1.pressed) or input.r.pressed then
+  if (self.selected and input.m1.pressed) or input.reroll.pressed then
     if self.parent:is(BuyScreen) then
       if gold < 2 then
         self.spring:pull(0.2, 200, 10)
@@ -1037,7 +1037,7 @@ function RerollButton:update(dt)
       end
     end
 
-    if input.r.pressed then self.selected = false end
+    if input.reroll.pressed then self.selected = false end
   end
 end
 
