@@ -63,7 +63,8 @@ function Group:update(dt)
   self.cells = {}
   for _, object in ipairs(self.objects) do
     local cx, cy = math.floor(object.x/self.cell_size), math.floor(object.y/self.cell_size)
-    if tostring(cx) == tostring(0/0) or tostring(cy) == tostring(0/0) then goto continue end
+    -- NaN is the only value unequal to itself.
+    if cx ~= cx or cy ~= cy then goto continue end
     if not self.cells[cx] then self.cells[cx] = {} end
     if not self.cells[cx][cy] then self.cells[cx][cy] = {} end
     table.insert(self.cells[cx][cy], object)
@@ -245,6 +246,25 @@ function Group:get_objects_by_classes(class_list)
 end
 
 
+-- Checks whether the object is an instance of any class in the list; returns true if so.
+local function is_any_of(object, classes)
+  for _, class in ipairs(classes) do
+    if object:is(class) then return true end
+  end
+  return false
+end
+
+
+-- Checks whether an object with the same id is in the list; returns true if so.
+local function has_id(list, object)
+  if not list then return false end
+  for _, v in ipairs(list) do
+    if v.id == object.id then return true end
+  end
+  return false
+end
+
+
 -- Returns all objects inside the shape, using its .x, .y attributes as the center and its .w, .h attributes as its bounding size.
 -- If object_types is passed in then it only returns object of those classes.
 -- The bounding size is used to select objects quickly and roughly, and then more specific and expensive collision methods are run on the objects returned from that selection.
@@ -252,7 +272,6 @@ end
 -- group:get_objects_in_shape(Rectangle(player.x, player.y, 100, 100, player.r), {Enemy1, Enemy2}, {object_1, object_2}) -> same as above except excluding object instances object_1 and object_2
 function Group:get_objects_in_shape(shape, object_types, exclude_list)
   local out = {}
-  local exclude_list = exclude_list or {}
   local cx1, cy1 = math.floor((shape.x-shape.w)/self.cell_size), math.floor((shape.y-shape.h)/self.cell_size)
   local cx2, cy2 = math.floor((shape.x+shape.w)/self.cell_size), math.floor((shape.y+shape.h)/self.cell_size)
   for i = cx1, cx2 do
@@ -263,8 +282,8 @@ function Group:get_objects_in_shape(shape, object_types, exclude_list)
         if cell_objects then
           for _, object in ipairs(cell_objects) do
             if object_types then
-              if not table.any(exclude_list, function(v) return v.id == object.id end) then
-                if table.any(object_types, function(v) return object:is(v) end) and object.shape and object.shape:is_colliding_with_shape(shape) then
+              if not has_id(exclude_list, object) then
+                if is_any_of(object, object_types) and object.shape and object.shape:is_colliding_with_shape(shape) then
                   table.insert(out, object)
                 end
               end

@@ -43,9 +43,24 @@ function shared_init()
   pixul_font = Font('PixulBrush', 8)
   background_canvas = Canvas(gw, gh)
   main_canvas = Canvas(gw, gh, {stencil = true})
-  shadow_canvas = Canvas(gw, gh)
-  shadow_shader = Shader(nil, 'shadow.frag')
   star_canvas = Canvas(gw, gh, {stencil = true})
+  -- The checkerboard never changes, so it is rendered once and replayed under the camera.
+  checkerboard_canvas = Canvas(32*22, 18*22)
+  checkerboard_canvas:draw_to(function()
+    for i = 1, 32 do
+      for j = 1, 18 do
+        if j % 2 == 0 then
+          if i % 2 == 1 then
+            graphics.rectangle2(0 + (i-1)*22, 0 + (j-1)*22, 22, 22, nil, nil, bg_off)
+          end
+        else
+          if i % 2 == 0 then
+            graphics.rectangle2(0 + (i-1)*22, 0 + (j-1)*22, 22, 22, nil, nil, bg_off)
+          end
+        end
+      end
+    end
+  end)
   star_group = Group()
   star_positions = {}
   for i = -30, gh + 30, 15 do table.insert(star_positions, {x = -40, y = i}) end
@@ -60,19 +75,7 @@ function shared_draw(draw_action)
 
   background_canvas:draw_to(function()
     camera:attach()
-    for i = 1, 32 do
-      for j = 1, 18 do
-        if j % 2 == 0 then
-          if i % 2 == 1 then
-            graphics.rectangle2(0 + (i-1)*22, 0 + (j-1)*22, 22, 22, nil, nil, bg_off)
-          end
-        else
-          if i % 2 == 0 then
-            graphics.rectangle2(0 + (i-1)*22, 0 + (j-1)*22, 22, 22, nil, nil, bg_off)
-          end
-        end
-      end
-    end
+    checkerboard_canvas:draw(0, 0)
     bg_gradient:draw(gw/2, gh/2, 480, 270)
     camera:detach()
   end)
@@ -82,16 +85,8 @@ function shared_draw(draw_action)
     if flashing then graphics.rectangle(gw/2, gh/2, gw, gh, nil, nil, flash_color) end
   end)
 
-  shadow_canvas:draw_to(function()
-    graphics.set_color(white[0])
-    shadow_shader:set()
-    main_canvas:draw2(0, 0, 0, 1, 1)
-    shadow_shader:unset()
-  end)
-
   local x, y = 0, 0
   background_canvas:draw(x, y, 0, sx, sy)
-  shadow_canvas:draw(x + 1.5*sx, y + 1.5*sy, 0, sx, sy)
   main_canvas:draw(x, y, 0, sx, sy)
 end
 
@@ -374,7 +369,7 @@ function SpawnEffect:init(args)
   self.t:tween(0.1, self, {rs = 6}, math.cubic_in_out, function()
     if self.action then self.action(self.x, self.y) end
     self.spring:pull(1)
-    for i = 1, random:int(6, 8) do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.target_color, duration = random:float(0.3, 0.5), w = random:float(5, 8), v = random:float(150, 200)} end
+    for i = 1, random:int(3, 6) do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.target_color, duration = random:float(0.3, 0.5), w = random:float(5, 8), v = random:float(150, 200)} end
     self.t:tween(0.25, self, {rs = 0}, math.linear, function() self.dead = true end)
     self.t:after(0.15, function() self.color = self.target_color end)
   end)

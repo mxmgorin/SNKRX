@@ -273,7 +273,7 @@ function Physics:get_closest_object_in_shape(shape, object_types, exclude_list)
   local min_d, min_i = 1000000, 0
   local exclude_list = exclude_list or {}
   for i, object in ipairs(objects) do
-    if not table.any(exclude_list, function(v) return v.id == object.id end) then
+    if not table.contains(exclude_list, object) then
       local d = math.distance(self.x, self.y, object.x, object.y)
       if d < min_d then
         min_d = d

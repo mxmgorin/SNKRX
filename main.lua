@@ -10,6 +10,7 @@ require 'media'
 
 
 function init()
+  cursor_image = love.graphics.newImage('left_ptr.png')
   shared_init()
 
   input:bind('move_left', {'a', 'left', 'dpleft', 'm1'})
@@ -118,12 +119,12 @@ function init()
   rogue_crit1 = Sound('Dagger Stab (Flesh) 4.ogg', s)
   rogue_crit2 = Sound('Sword hits another sword 6.ogg', s)
 
-  song1 = Sound('Kubbi - Ember - 01 Pathfinder.ogg', {tags = {music}})
-  song2 = Sound('Kubbi - Ember - 02 Ember.ogg', {tags = {music}})
-  song3 = Sound('Kubbi - Ember - 03 Firelight.ogg', {tags = {music}})
-  song4 = Sound('Kubbi - Ember - 04 Cascade.ogg', {tags = {music}})
-  song5 = Sound('Kubbi - Ember - 05 Compass.ogg', {tags = {music}})
-  death_song = Sound('Kubbi - Ember - 09 Formed by Glaciers.ogg', {tags = {music}})
+  song1 = Sound('Kubbi - Ember - 01 Pathfinder.ogg', {tags = {music}}, 'stream')
+  song2 = Sound('Kubbi - Ember - 02 Ember.ogg', {tags = {music}}, 'stream')
+  song3 = Sound('Kubbi - Ember - 03 Firelight.ogg', {tags = {music}}, 'stream')
+  song4 = Sound('Kubbi - Ember - 04 Cascade.ogg', {tags = {music}}, 'stream')
+  song5 = Sound('Kubbi - Ember - 05 Compass.ogg', {tags = {music}}, 'stream')
+  death_song = Sound('Kubbi - Ember - 09 Formed by Glaciers.ogg', {tags = {music}}, 'stream')
 
   lock_image = Image('lock')
   speed_booster_elite = Image('speed_booster_elite')
@@ -1837,6 +1838,8 @@ function draw()
   shared_draw(function()
     main:draw()
   end)
+  -- The system cursor is not drawn in fullscreen on every device.
+  if love.mouse.isVisible() then love.graphics.draw(cursor_image, love.mouse.getPosition()) end
 end
 
 

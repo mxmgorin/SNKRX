@@ -82,6 +82,8 @@ function MainMenu:on_enter(from)
 
   self.title_text = Text({{text = '[wavy_mid, fg]SNKRX', font = fat_font, alignment = 'center'}}, global_text_tags)
 
+  love.mouse.setPosition(75, wh/2 - 15)
+
   self.arena_run_button = Button{group = self.main_ui, x = 55, y = gh/2 - 10, force_update = true, button_text = 'arena run', fg_color = 'bg10', bg_color = 'bg', action = function(b)
     ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}

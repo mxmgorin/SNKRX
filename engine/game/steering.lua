@@ -164,14 +164,25 @@ end
 function Physics:steering_separate(rs, class_avoid_list, weight)
   self.separating = true
   local fx, fy = 0, 0
-  local objects = table.flatten(table.foreachn(class_avoid_list, function(v) return self.group:get_objects_by_class(v) end), true)
-  for _, object in ipairs(objects) do
-    if object.id ~= self.id and math.distance(object.x, object.y, self.x, self.y) < 2*rs then
-      local tx, ty = self.x - object.x, self.y - object.y
-      local nx, ny = math.normalize(tx, ty)
-      local l = math.length(nx, ny)
-      fx = fx + rs*(nx/l)
-      fy = fy + rs*(ny/l)
+  -- Only the group's spatial cells within reach can hold a neighbour closer than 2*rs.
+  local cells, cell_size, reach = self.group.cells, self.group.cell_size, 2*rs
+  for i = math.floor((self.x - reach)/cell_size), math.floor((self.x + reach)/cell_size) do
+    local column = cells[i]
+    if column then
+      for j = math.floor((self.y - reach)/cell_size), math.floor((self.y + reach)/cell_size) do
+        local cell = column[j]
+        if cell then
+          for _, object in ipairs(cell) do
+            if object.id ~= self.id and table.contains(class_avoid_list, getmetatable(object)) and math.distance(object.x, object.y, self.x, self.y) < reach then
+              local tx, ty = self.x - object.x, self.y - object.y
+              local nx, ny = math.normalize(tx, ty)
+              local l = math.length(nx, ny)
+              fx = fx + rs*(nx/l)
+              fy = fy + rs*(ny/l)
+            end
+          end
+        end
+      end
     end
   end
   self.separation_f:set(fx*(weight or 1), fy*(weight or 1))

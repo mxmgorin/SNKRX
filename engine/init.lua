@@ -43,6 +43,10 @@ if not path:find("init") then
   require(path .. ".game.hitfx")
 end
 
+-- Fixed logic tick rate and the most ticks run per drawn frame before falling behind.
+local tick_rate = 30
+local max_ticks_per_frame = 3
+
 function engine_run(config)
   if not web then
     love.filesystem.setIdentity(config.game_name)
@@ -64,13 +68,8 @@ function engine_run(config)
     sx, sy = window_width/(config.game_width or 480), window_height/(config.game_height or 270)
     ww, wh = window_width, window_height
 
-    if state.sx and state.sy then
-      sx, sy = state.sx, state.sy
-      love.window.setMode(state.sx*gw, state.sy*gh, {vsync = config.vsync, msaa = msaa or 0, display = config.display})
-    else
-      state.sx, state.sy = sx, sy
-      love.window.setMode(window_width, window_height, {vsync = config.vsync, msaa = msaa or 0, display = config.display})
-    end
+    state.sx, state.sy = sx, sy
+    love.window.setMode(window_width, window_height, {vsync = config.vsync, msaa = msaa or 0, display = config.display, fullscreen = true})
     love.window.setTitle(config.game_name)
 
   else
@@ -103,17 +102,13 @@ function engine_run(config)
 
   if love.timer then love.timer.step() end
 
-  if not web then
-    _, _, flags = love.window.getMode()
-    fixed_dt = 1/flags.refreshrate
-  else fixed_dt = 1/60 end
-
+  fixed_dt = 1/tick_rate
+  local max_accumulator = fixed_dt*max_ticks_per_frame
   local accumulator = fixed_dt
   local dt = 0
   frame, time = 0, 0
 
-  if not web then refresh_rate = flags.refreshrate
-  else refresh_rate = 60 end
+  refresh_rate = tick_rate
 
   return function()
     if love.event then
@@ -147,8 +142,10 @@ function engine_run(config)
     if love.timer then dt = love.timer.step() end
 
     steam.runCallbacks()
-    accumulator = accumulator + dt
+    accumulator = math.min(accumulator + dt, max_accumulator)
+    local ticked = false
     while accumulator >= fixed_dt do
+      ticked = true
       frame = frame + 1
       input:update(fixed_dt)
       trigger:update(fixed_dt)
@@ -164,7 +161,8 @@ function engine_run(config)
       time = time + fixed_dt
     end
 
-    if love.graphics and love.graphics.isActive() then
+    -- A frame without a tick would redraw unchanged state.
+    if ticked and love.graphics and love.graphics.isActive() then
       love.graphics.origin()
       love.graphics.clear(love.graphics.getBackgroundColor())
       draw()

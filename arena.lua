@@ -22,6 +22,7 @@ function Arena:on_enter(from, level, loop, units, passives, shop_level, shop_xp,
 
   if not state.mouse_control then
     input:set_mouse_visible(false)
+    love.mouse.setPosition(0, 0)
   end
 
   trigger:tween(2, main_song_instance, {volume = 0.5, pitch = 1}, math.linear)
@@ -344,6 +345,7 @@ function Arena:on_exit()
   self.springs = nil
   self.flashes = nil
   self.hfx = nil
+  love.mouse.setPosition(ww*0.3, wh*0.3)
 end
 
 
@@ -705,6 +707,7 @@ end
 
 
 function Arena:set_passives(from_reroll)
+  love.mouse.setPosition(ww*0.5, wh*0.5)
   if from_reroll then
     self:restore_passives_to_pool(0)
     if self.cards[1] then self.cards[1].dead = true end

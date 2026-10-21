@@ -83,12 +83,11 @@ function Random:weighted_pick(...)
 end
 
 
+local uid_count = 0
+
 -- Returns a unique identifier.
+-- Unique only within one session; the prefix keeps it apart from named trigger tags.
 function Random:uid()
-  local fn = function(x)
-    local r = self:int(1, 16) - 1
-    r = (x == "x") and (r + 1) or (r % 4) + 9
-    return ("0123456789abcdef"):sub(r, r)
-  end
-  return (("xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"):gsub("[xy]", fn))
+  uid_count = uid_count + 1
+  return '#' .. uid_count
 end

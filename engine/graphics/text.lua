@@ -65,13 +65,10 @@ function Text:update(dt)
   self:format_text()
   for _, line in ipairs(self.lines) do
     for i, c in ipairs(line.characters) do
-      for k, v in pairs(self.text_tags) do
-        for _, tag in ipairs(c.tags) do
-          if tag == k then
-            if v.actions.update then 
-              v.actions.update(c, dt, i, self)
-            end
-          end
+      for _, tag in ipairs(c.tags) do
+        local v = self.text_tags[tag]
+        if v and v.actions.update then
+          v.actions.update(c, dt, i, self)
         end
       end
     end
@@ -83,13 +80,10 @@ end
 function Text:draw(x, y, r, sx, sy)
   for _, line in ipairs(self.lines) do
     for i, c in ipairs(line.characters) do
-      for k, v in pairs(self.text_tags) do
-        for _, tag in ipairs(c.tags) do
-          if tag == k then
-            if v.actions.draw then
-              v.actions.draw(c, i, self)
-            end
-          end
+      for _, tag in ipairs(c.tags) do
+        local v = self.text_tags[tag]
+        if v and v.actions.draw then
+          v.actions.draw(c, i, self)
         end
       end
       graphics.push(x, y, r, sx, sy)
