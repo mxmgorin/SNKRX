@@ -19,9 +19,22 @@ navigation.cursor_hidden = true
 
 -- Records every warp, so a position change not recorded here comes from a real mouse.
 local set_position = love.mouse.setPosition
+local get_position = love.mouse.getPosition
+-- Warped position, kept apart from the system pointer, which some compositors refuse to move.
+local warp_x, warp_y, pointer_x, pointer_y
 function love.mouse.setPosition(x, y)
   set_position(x, y)
+  warp_x, warp_y = x, y
+  pointer_x, pointer_y = get_position()
   last_x, last_y = love.mouse.getPosition()
+end
+
+-- Returns the last warped position until the system pointer moves, then the pointer's.
+function love.mouse.getPosition()
+  local x, y = get_position()
+  if warp_x and x == pointer_x and y == pointer_y then return warp_x, warp_y end
+  warp_x = nil
+  return x, y
 end
 
 
