@@ -80,14 +80,16 @@ function Arena:on_enter(from, level, loop, units, passives, shop_level, shop_xp,
   self.spawn_offsets = {{x = -12, y = -12}, {x = 12, y = -12}, {x = 12, y = 12}, {x = -12, y = 12}, {x = 0, y = 0}}
   self.last_spawn_enemy_time = love.timer.getTime()
 
-  Wall{group = self.main, vertices = math.to_rectangle_vertices(-40, -40, self.x1, gh + 40), color = bg[-1]}
-  Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x2, -40, gw + 40, gh + 40), color = bg[-1]}
-  Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x1, -40, self.x2, self.y1), color = bg[-1]}
-  Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x1, self.y2, self.x2, gh + 40), color = bg[-1]}
-  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(-40, -40, self.x1, gh + 40), color = bg[-1]}
-  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x2, -40, gw + 40, gh + 40), color = bg[-1]}
-  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, -40, self.x2, self.y1), color = bg[-1]}
-  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, self.y2, self.x2, gh + 40), color = bg[-1]}
+  -- Walls reach past the frame to the window edges.
+  local mx, my = 40 + margin_x, 40 + margin_y
+  Wall{group = self.main, vertices = math.to_rectangle_vertices(-mx, -my, self.x1, gh + my), color = bg[-1]}
+  Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x2, -my, gw + mx, gh + my), color = bg[-1]}
+  Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x1, -my, self.x2, self.y1), color = bg[-1]}
+  Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x1, self.y2, self.x2, gh + my), color = bg[-1]}
+  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(-mx, -my, self.x1, gh + my), color = bg[-1]}
+  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x2, -my, gw + mx, gh + my), color = bg[-1]}
+  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, -my, self.x2, self.y1), color = bg[-1]}
+  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, self.y2, self.x2, gh + my), color = bg[-1]}
 
   for i, unit in ipairs(units) do
     if i == 1 then

@@ -48,14 +48,16 @@ function MainMenu:on_enter(from)
   self.x1, self.y1 = gw/2 - 0.8*gw/2, gh/2 - 0.8*gh/2
   self.x2, self.y2 = gw/2 + 0.8*gw/2, gh/2 + 0.8*gh/2
   self.w, self.h = self.x2 - self.x1, self.y2 - self.y1
-  Wall{group = self.main, vertices = math.to_rectangle_vertices(-40, -40, self.x1, gh + 40), color = bg[-1]}
-  Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x2, -40, gw + 40, gh + 40), color = bg[-1]}
-  Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x1, -40, self.x2, self.y1), color = bg[-1]}
-  Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x1, self.y2, self.x2, gh + 40), color = bg[-1]}
-  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(-40, -40, self.x1, gh + 40), color = bg[-1]}
-  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x2, -40, gw + 40, gh + 40), color = bg[-1]}
-  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, -40, self.x2, self.y1), color = bg[-1]}
-  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, self.y2, self.x2, gh + 40), color = bg[-1]}
+  -- Walls reach past the frame to the window edges.
+  local mx, my = 40 + margin_x, 40 + margin_y
+  Wall{group = self.main, vertices = math.to_rectangle_vertices(-mx, -my, self.x1, gh + my), color = bg[-1]}
+  Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x2, -my, gw + mx, gh + my), color = bg[-1]}
+  Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x1, -my, self.x2, self.y1), color = bg[-1]}
+  Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x1, self.y2, self.x2, gh + my), color = bg[-1]}
+  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(-mx, -my, self.x1, gh + my), color = bg[-1]}
+  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x2, -my, gw + mx, gh + my), color = bg[-1]}
+  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, -my, self.x2, self.y1), color = bg[-1]}
+  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, self.y2, self.x2, gh + my), color = bg[-1]}
 
   self.t:every(0.375, function()
     local p = random:table(star_positions)

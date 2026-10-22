@@ -41,14 +41,18 @@ function shared_init()
 
   fat_font = Font('FatPixelFont', 8)
   pixul_font = Font('PixulBrush', 8)
-  background_canvas = Canvas(gw, gh)
-  main_canvas = Canvas(gw, gh, {stencil = true})
+  -- Margin between the frame and the window edges, in game units; the canvases cover it.
+  margin_x, margin_y = frame_x/sx, frame_y/sy
+  background_canvas = Canvas(math.ceil(gw + 2*margin_x), math.ceil(gh + 2*margin_y))
+  main_canvas = Canvas(math.ceil(gw + 2*margin_x), math.ceil(gh + 2*margin_y), {stencil = true})
   star_canvas = Canvas(gw, gh, {stencil = true})
+  -- Extra checkerboard cells around the frame, in pairs so the pattern parity holds.
+  checker_cols, checker_rows = 2*math.ceil(margin_x/44), 2*math.ceil(margin_y/44)
   -- The checkerboard never changes, so it is rendered once and replayed under the camera.
-  checkerboard_canvas = Canvas(32*22, 18*22)
+  checkerboard_canvas = Canvas((32 + 2*checker_cols)*22, (18 + 2*checker_rows)*22)
   checkerboard_canvas:draw_to(function()
-    for i = 1, 32 do
-      for j = 1, 18 do
+    for i = 1, 32 + 2*checker_cols do
+      for j = 1, 18 + 2*checker_rows do
         if j % 2 == 0 then
           if i % 2 == 1 then
             graphics.rectangle2(0 + (i-1)*22, 0 + (j-1)*22, 22, 22, nil, nil, bg_off)
@@ -74,19 +78,25 @@ function shared_draw(draw_action)
   end)
 
   background_canvas:draw_to(function()
+    love.graphics.push()
+    love.graphics.translate(margin_x, margin_y)
     camera:attach()
-    checkerboard_canvas:draw(0, 0)
-    bg_gradient:draw(gw/2, gh/2, 480, 270)
+    checkerboard_canvas:draw(-checker_cols*22, -checker_rows*22)
+    bg_gradient:draw(gw/2, gh/2, gw + 2*margin_x, gh + 2*margin_y)
     camera:detach()
+    love.graphics.pop()
   end)
 
   main_canvas:draw_to(function()
+    love.graphics.push()
+    love.graphics.translate(margin_x, margin_y)
     draw_action()
-    if flashing then graphics.rectangle(gw/2, gh/2, gw, gh, nil, nil, flash_color) end
+    if flashing then graphics.rectangle(gw/2, gh/2, gw + 2*margin_x, gh + 2*margin_y, nil, nil, flash_color) end
+    love.graphics.pop()
   end)
 
-  background_canvas:draw(frame_x, frame_y, 0, sx, sy)
-  main_canvas:draw(frame_x, frame_y, 0, sx, sy)
+  background_canvas:draw(0, 0, 0, sx, sy)
+  main_canvas:draw(0, 0, 0, sx, sy)
 end
 
 
