@@ -85,9 +85,8 @@ function shared_draw(draw_action)
     if flashing then graphics.rectangle(gw/2, gh/2, gw, gh, nil, nil, flash_color) end
   end)
 
-  local x, y = 0, 0
-  background_canvas:draw(x, y, 0, sx, sy)
-  main_canvas:draw(x, y, 0, sx, sy)
+  background_canvas:draw(frame_x, frame_y, 0, sx, sy)
+  main_canvas:draw(frame_x, frame_y, 0, sx, sy)
 end
 
 

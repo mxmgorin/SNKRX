@@ -1830,7 +1830,7 @@ function draw()
     main:draw()
   end)
   -- The system cursor is not drawn in fullscreen on every device.
-  if love.mouse.isVisible() and not navigation.cursor_hidden then love.graphics.draw(cursor_image, love.mouse.getPosition()) end
+  if love.mouse.isVisible() and not navigation.cursor_hidden then local mx, my = love.mouse.getPosition(); love.graphics.draw(cursor_image, mx + frame_x, my + frame_y) end
 end
 
 

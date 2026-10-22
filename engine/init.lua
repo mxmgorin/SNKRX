@@ -66,8 +66,18 @@ function engine_run(config)
     if config.anisotropy ~= 'max' then anisotropy = config.anisotropy end
 
     gw, gh = config.game_width or 480, config.game_height or 270
-    sx, sy = window_width/(config.game_width or 480), window_height/(config.game_height or 270)
-    ww, wh = window_width, window_height
+    -- Uniform scale keeps the aspect ratio; the frame is centred and the rest stays black.
+    sx = math.min(window_width/gw, window_height/gh)
+    sy = sx
+    ww, wh = gw*sx, gh*sy
+    frame_x, frame_y = math.floor((window_width - ww)/2), math.floor((window_height - wh)/2)
+    -- Mouse coordinates are relative to the frame, not the window.
+    local get_position, set_position = love.mouse.getPosition, love.mouse.setPosition
+    function love.mouse.getPosition()
+      local x, y = get_position()
+      return x - frame_x, y - frame_y
+    end
+    function love.mouse.setPosition(x, y) set_position(x + frame_x, y + frame_y) end
 
     state.sx, state.sy = sx, sy
     love.window.setMode(window_width, window_height, {vsync = config.vsync, msaa = msaa or 0, display = config.display, fullscreen = true})
@@ -77,6 +87,7 @@ function engine_run(config)
     gw, gh = config.game_width or 480, config.game_height or 270 
     sx, sy = 2, 2
     ww, wh = 960, 540
+    frame_x, frame_y = 0, 0
   end
 
   love.window.setIcon(love.image.newImageData('assets/images/icon.png'))
